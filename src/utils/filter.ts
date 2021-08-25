@@ -1,8 +1,14 @@
 const filters = {
-  colorName: (dataItem, filterParam) => dataItem.node.colorFamily[0]?.name.toLowerCase() === filterParam.toLowerCase(),
-  priceMin: (dataItem, filterParam) => parseFloat(dataItem.node.shopifyProductEu.variants.edges[0].node.price) >= parseFloat(filterParam),
-  priceMax: (dataItem, filterParam) => parseFloat(dataItem.node.shopifyProductEu.variants.edges[0].node.price) <= parseFloat(filterParam),
-  categoryTags: (dataItem, filterParam) => filterParam && dataItem.node.categoryTags?.includes(filterParam)
+  colorName: ({ node }, filterParam) => node.colorFamily && node.colorFamily[0].name.toLowerCase() === filterParam.toLowerCase(),
+  
+  priceMin: ({node}, filterParam) => parseFloat(node.shopifyProductEu.variants.edges[0].node.price) >= parseFloat(filterParam),
+
+  priceMax: ({ node }, filterParam) => parseFloat(node.shopifyProductEu.variants.edges[0].node.price) <= parseFloat(filterParam),
+
+  categoryTags: ({ node }, filterParam) =>  {
+    const categoryRegex = new RegExp(filterParam.replace(/,\s+/, ' '), 'ig')
+    return filterParam && node.categoryTags && categoryRegex.test(node.categoryTags.join(' '))
+  }
 }
 
 const runFilterOperation = (dataset, filterRule, filterValue) => {

@@ -10,7 +10,7 @@ type IProductProps = {
   key: number
 }
 const imageLoader = ({ src, width, quality }) => {
-  return `http://${src.replace(/^\/\//,'')}?w=${width}&q=${quality || 75}`
+  return `https://${src.replace(/^\/\//,'')}?w=${width}&q=${quality || 75}`
 }
 const ProductCard = (product: IProductProps) => (
   <section className={ styles.card }>

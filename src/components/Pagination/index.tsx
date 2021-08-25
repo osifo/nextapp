@@ -34,8 +34,4 @@ const Pagination = ({ pageCount, activePage, gotoPage }: IPaginationProps) => {
   );
 }
 
-// Pagination.defaultProps = {
-//   pageCount: 1
-// }
-
 export default Pagination;

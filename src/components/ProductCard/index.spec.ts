@@ -1,3 +1,3 @@
-describe("Pagination", () => {
+describe("Product Card", () => {
   xit("should have a", () => {});
 });
