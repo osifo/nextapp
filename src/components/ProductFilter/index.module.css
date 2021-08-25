@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex: 0.5;
+  flex-direction: row;
+}
+
+.filter_group {
+  display: flex;
+  flex-direction: column;
+  margin: auto 10px;
+}
+
+.filter_group label {
+  font-size: 12px;
+  height: 20px;
+}
+
+.filter_group input {
+  font-size: 14px;
+  line-height: 14px;
+  padding: 4px 6px; 
+}

@@ -24,13 +24,16 @@ const ProductListing = () => {
   useEffect(() => {
     const dataset = PRODUCT_DATA.data.allContentfulProductPage.edges
     let filteredResult = filterData(dataset, colorFilter, minPriceFilter, maxPriceFilter, categoryFilter);
-    setPageCount(Math.ceil(filteredResult.length / PAGE_SIZE))
+    const pageSize = filteredResult.length > PAGE_SIZE ? PAGE_SIZE : filteredResult.length;
 
-    const result = filteredResult.length ? paginateData(filteredResult, pageNumber, pageCount, PAGE_SIZE) : []
+    setPageCount(Math.ceil(filteredResult.length / pageSize))
+
+
+    const result = filteredResult.length ? paginateData(filteredResult, pageNumber, pageCount, pageSize) : []
 
     setProductList(result);
 
-  }, [pageNumber, PAGE_SIZE, pageCount, colorFilter, minPriceFilter, maxPriceFilter, categoryFilter])
+  }, [pageNumber, pageCount, colorFilter, minPriceFilter, maxPriceFilter, categoryFilter])
 
   const renderResult = () => (
     <>
@@ -39,9 +42,7 @@ const ProductListing = () => {
       </section>
       <section className={styles.container}>
         { productList.length ? 
-          productList.map((item, index) => {
-            return ( <ProductCard {...item.node} key={index} />) 
-          })
+          productList.map((item, index) => (<ProductCard {...item.node} key={index} />))
           : '' 
         }
       </section>
