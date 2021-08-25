@@ -5,7 +5,8 @@ import Pagination from '../../src/components/Pagination';
 import ProductFilter from '../../src/components/ProductFilter';
 import prodData from '../../src/data/products.json'
 import styles from './products.module.css'
-import { filterData, paginateData } from '../../src/utils'
+import { filter } from '../../src/utils/filter' 
+import { paginate } from '../../src/utils/paginate'
 
 const PRODUCT_DATA = JSON.parse(JSON.stringify(prodData));;
 
@@ -15,21 +16,42 @@ const ProductListing = () => {
   const [productList, setProductList] = useState([]);
   const [pageNumber,  setPageNumber] = useState(1);
   const [pageCount, setPageCount ] = useState(1);
-  const[colorFilter, setColorFilter] = useState()
-  const[minPriceFilter, setMinPriceFilter] = useState()
-  const[maxPriceFilter, setMaxPriceFilter] = useState()
-  const[categoryFilter, setCategoryFilter] = useState()
-  const [activeFilters, setActiveFilters] = useState([])
+  const [colorFilter, setColorFilter] = useState()
+  const [minPriceFilter, setMinPriceFilter] = useState()
+  const [maxPriceFilter, setMaxPriceFilter] = useState()
+  const [categoryFilter, setCategoryFilter] = useState([])
+  const [activeFilters, setActiveFilters] = useState({})
 
+  const buildFilter = (colorName, priceMin, priceMax, categoryTags) => {
+    const filterCriteria = {};
+
+    if(colorName) filterCriteria['colorName'] = colorName;
+    if(priceMin) filterCriteria['priceMin'] = priceMin;
+    if(priceMax) filterCriteria['priceMax'] = priceMax;
+    if(categoryTags.length) filterCriteria['categoryTags'] = categoryTags;
+
+    return filterCriteria;
+  }
+
+  // //filters
+  // useEffect(() => {
+
+  // })
+
+  //pagination
   useEffect(() => {
-    const dataset = PRODUCT_DATA.data.allContentfulProductPage.edges
-    let filteredResult = filterData(dataset, colorFilter, minPriceFilter, maxPriceFilter, categoryFilter);
+    const dataset = PRODUCT_DATA.data.allContentfulProductPage.edges;
+
+    const filterCriteria = buildFilter(colorFilter, minPriceFilter, maxPriceFilter, categoryFilter)
+    setActiveFilters(filterCriteria);
+    
+    let filteredResult = filter(dataset, activeFilters);
+
     const pageSize = filteredResult.length > PAGE_SIZE ? PAGE_SIZE : filteredResult.length;
 
     setPageCount(Math.ceil(filteredResult.length / pageSize))
 
-
-    const result = filteredResult.length ? paginateData(filteredResult, pageNumber, pageCount, pageSize) : []
+    const result = filteredResult.length ? paginate(filteredResult, pageNumber, pageCount, pageSize) : []
 
     setProductList(result);
 
