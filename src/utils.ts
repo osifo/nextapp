@@ -1,24 +1,33 @@
 export const filterData = (dataset, colorName, priceMin, priceMax, categoryTags) => {
   let filteredProducts = [];
-  
+
+  if(!colorName && !priceMin && !priceMax && !categoryTags) return dataset;
+
   for(let i = 0; i < dataset.length; i++) {
     if(
-      colorName && dataset[i].colorFamily.name === colorName ||
-      priceMin && dataset[i].shopifyProductEu.edges.node.price >= priceMin || 
-      priceMax && dataset[i].shopifyProductEu.edges.node.price <= priceMax || 
-      categoryTags && dataset[i].categoryTags.includes(categoryTags)
+      // colorName && dataset[i].node.colorFamily[0]?.name.toLowerCase() === colorName.toLowerCase() ||
+      priceMin && parseFloat(dataset[i].node.shopifyProductEu.variants.edges[0].node.price) >= parseFloat(priceMin) || 
+      priceMax && parseFloat(dataset[i].node.shopifyProductEu.variants.edges[0].node.price) <= parseFloat(priceMax) || 
+      categoryTags && dataset[i].node.categoryTags?.includes(categoryTags)
     ) {
-      filteredProducts.push(dataset);
+      filteredProducts.push(dataset[i]);
+    } else {
+      continue;
     }
   }
-
   return filteredProducts;
 }
 
 export const paginateData = (dataset, pageNumber, pageCount, pageSize) => {
   // if (pageNumber > pageCount) return new Error("Invalid Page number");
-  const startIndex = pageNumber == 1 ? 0 : pageSize * pageNumber;
+  let startIndex;
   const pageData = [];
+
+  if (pageNumber === 1) {
+    startIndex = 0
+  } else {
+    startIndex = pageNumber > pageCount ?  0 : pageSize * (pageNumber - 1);
+  }
 
   while (pageData.length < pageSize) {
     pageData.push(dataset[startIndex + pageData.length])

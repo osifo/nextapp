@@ -2,38 +2,75 @@
 import {useEffect, useState} from 'react';
 import ProductCard from '../../src/components/ProductCard';
 import Pagination from '../../src/components/Pagination';
+import ProductFilter from '../../src/components/ProductFilter';
 import prodData from '../../src/data/products.json'
 import styles from './products.module.css'
 import { filterData, paginateData } from '../../src/utils'
-const PAGE_SIZE = 20
+
+const PRODUCT_DATA = JSON.parse(JSON.stringify(prodData));;
 
 const ProductListing = () => {
-  const fileData = JSON.parse(JSON.stringify(prodData));
+  const PAGE_SIZE = 20
+  
   const [productList, setProductList] = useState([]);
   const [pageNumber,  setPageNumber] = useState(1);
   const [pageCount, setPageCount ] = useState(1);
+  const[colorFilter, setColorFilter] = useState()
+  const[minPriceFilter, setMinPriceFilter] = useState()
+  const[maxPriceFilter, setMaxPriceFilter] = useState()
+  const[categoryFilter, setCategoryFilter] = useState()
+  const [activeFilters, setActiveFilters] = useState([])
 
   useEffect(() => {
-    const dataset = fileData.data.allContentfulProductPage.edges
-    setPageCount(Math.ceil(dataset.length / PAGE_SIZE))
+    const dataset = PRODUCT_DATA.data.allContentfulProductPage.edges
+    let filteredResult = filterData(dataset, colorFilter, minPriceFilter, maxPriceFilter, categoryFilter);
+    setPageCount(Math.ceil(filteredResult.length / PAGE_SIZE))
 
-    const paginatedResult = paginateData(dataset, pageNumber, pageCount, PAGE_SIZE)
-    setProductList(paginatedResult);
+    const result = filteredResult.length ? paginateData(filteredResult, pageNumber, pageCount, PAGE_SIZE) : []
 
-  }, [pageNumber, PAGE_SIZE, pageCount])
-  
-  return (
-    <div>
-      <h2>{ "This is the products listing page" }</h2>
+    setProductList(result);
+
+  }, [pageNumber, PAGE_SIZE, pageCount, colorFilter, minPriceFilter, maxPriceFilter, categoryFilter])
+
+  const renderResult = () => (
+    <>
       <section className={styles.pager}>
         <Pagination pageCount={pageCount} gotoPage={setPageNumber} activePage={pageNumber} />
       </section>
       <section className={styles.container}>
-        { productList.map((item, index) => <ProductCard {...item.node} key={index} />) }
+        { productList.length ? 
+          productList.map((item, index) => {
+            return ( <ProductCard {...item.node} key={index} />) 
+          })
+          : '' 
+        }
       </section>
       <section className={styles.pager}>
         <Pagination pageCount={pageCount} gotoPage={setPageNumber} activePage={pageNumber} />
       </section>
+    </>
+  );
+
+  const renderEmpty = () => (
+    <section>
+      <p>Your search returned no results</p>
+    </section>
+  )
+  
+  return (
+    <div>
+      <h2>{ "This is the products listing page" }</h2>
+
+      <section className={styles.filter}>
+        <ProductFilter 
+          setColorFilter={setColorFilter}
+          setMinPriceFilter={setMinPriceFilter}
+          setMaxPriceFilter={setMaxPriceFilter}
+          setCategoryFilter={setCategoryFilter}
+          activePageFilters={activeFilters}
+         />
+      </section>
+      {productList.length ? renderResult() : renderEmpty() }
     </div>
   );
   

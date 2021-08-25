@@ -9,12 +9,15 @@ type IProductProps = {
   shopifyProductEu: any
   key: number
 }
-
+const imageLoader = ({ src, width, quality }) => {
+  return `http://${src.replace(/^\/\//,'')}?w=${width}&q=${quality || 75}`
+}
 const ProductCard = (product: IProductProps) => (
   <section className={ styles.card }>
     <figure>
       <Image 
-        src={product.thumbnailImage.file.url.replace(/^\/\//,'https://')}
+        loader={imageLoader}
+        src={product.thumbnailImage.file.url}
         alt="product image" 
         height={400}
         width={400}
