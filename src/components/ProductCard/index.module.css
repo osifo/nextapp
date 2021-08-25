@@ -1,0 +1,19 @@
+.card {
+  display: flex;
+  cursor: pointer;
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.product_name {
+  flex: 2
+}
+
+.product_price {
+  flex: 3;
+  text-align: right
+}

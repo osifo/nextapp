@@ -1,0 +1,12 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  gap: 10px;
+}
+
+.pager {
+  text-align: right;
+  margin-top: 20px;
+  padding: 2px 5px;
+}
